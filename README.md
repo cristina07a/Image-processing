@@ -1,17 +1,15 @@
-Image processing
+<h1>Image processing</h1>
 
-Cerinta + ce am folosit: 
+<h2>Overall view</h2>
+I used <b>Visual Basic.NET</b> in order to create a program that allows applying filters to images and resizing them. I also used <b>AForge.Imaging v2.2.5</b> from NuGet.
+  
+The program works as follows: you can add images that will be memorised as <i>layers</i>. Layers can be modified (sepia, grayscale, blur, resizing - depending on canvas size). Images are saved locally, in D:/Facultate/ProiectAPD/image.bmp (the path can be modified in Form1.vb, line 28).
 
-  Am implementat un program in Visual Basic.NET care face image processing. Am folosit,de asemenea: AForge.Imaging v2.2.5 (luat prin NuGet). Se pot adauga mai multe imagini care sunt memorate ca layers, 
-  iar apoi se pot aplica filtre (sepia, grayscale, blur). Sepia se poate aplica pentru fiecare layer selectat, in timp ce grayscale si blur se aplica tuturor layer-elor. De asemenea, se mai poate modifica
-  marimea fiecarui layer (adica a fiecarei imagini adaugate) in functie de lungimea plansei de lucru (Canvas). Imaginile se salveaza local, in D:/Facultate/ProiectAPD/image.bmp (locatia se poate modifica
-  din Form1.vb, linia 28.
+There is a difference between the folders I added in this project. The first folder, <b>version 1</b>, uses the library AForge.Imaging in order to blur and grayscale the layers. The folder <b>version 2</b> has a different take surrounding them, being non-standard (no library).
 
-  Filtrele de grayscale si blur se fac folosindu-se Aforge.Imaging
+<h2>Info</h2>
 
-Info masina:
-
-  Am rulat codul pe laptopul meu, care are 16GB RAM, Intel Core i5.
+  I ran the code on my laptop, which has 16GB RAM, Intel Core i5.
 
 asa arata interfata:
 ![image](https://github.com/cristina07a/Image-processing/assets/122676393/9d108055-6a6a-4527-9b65-2c28175cf567)
@@ -30,6 +28,4 @@ blur:
 
 sepia:
 ![image](https://github.com/cristina07a/Image-processing/assets/122676393/5d309429-6ec5-40d5-94f2-5a52c9098a80)
-
-
 
