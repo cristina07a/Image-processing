@@ -11,7 +11,11 @@ There is a difference between the folders I added in this project. The first fol
 
   I ran the code on my laptop, which has 16GB RAM, Intel Core i5.
 
-asa arata interfata:
+<h3>Application screenshots</h3>
+![image](https://github.com/cristina07a/Image-processing/assets/122676393/173eaa97-20f8-4886-a4c3-7199fb6d1192)
+
+
+
 ![image](https://github.com/cristina07a/Image-processing/assets/122676393/9d108055-6a6a-4527-9b65-2c28175cf567)
 
 adaugare imagine:
