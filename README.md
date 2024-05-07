@@ -41,24 +41,22 @@ Blur - average 500ms<br>
 
 
 <h3>Application screenshots</h3>
-![image](https://github.com/cristina07a/Image-processing/assets/122676393/173eaa97-20f8-4886-a4c3-7199fb6d1192)
+
+![image](https://github.com/cristina07a/Image-processing/assets/122676393/41e3ba72-e87d-47d9-83a9-fd02f3f977aa)
 
 
-
-![image](https://github.com/cristina07a/Image-processing/assets/122676393/9d108055-6a6a-4527-9b65-2c28175cf567)
-
-adaugare imagine:
-![image](https://github.com/cristina07a/Image-processing/assets/122676393/f8357876-72d0-4b57-96df-976826816f6c)
+add image:
+![image](https://github.com/cristina07a/Image-processing/assets/122676393/67d8e032-ed74-467f-a983-8ee6e587d552)
 
 resizing:
-![image](https://github.com/cristina07a/Image-processing/assets/122676393/85734470-bbc6-4cd2-9538-4bfd70635510)
+![image](https://github.com/cristina07a/Image-processing/assets/122676393/bf59ca6c-da96-43bd-9e75-db66fe366cd2)
 
 grayscale:
-![image](https://github.com/cristina07a/Image-processing/assets/122676393/5153fd35-6c30-4712-a605-e666db0f114f)
+![image](https://github.com/cristina07a/Image-processing/assets/122676393/909bf41b-e5e2-4730-bc5c-24ca63cc62f4)
 
 blur:
-![image](https://github.com/cristina07a/Image-processing/assets/122676393/51d94c82-7cc6-4ebd-a2a7-56370ee2b73f)
+![image](https://github.com/cristina07a/Image-processing/assets/122676393/e8606ebf-e410-4d1e-bf25-7ef5bb0f6a81)
 
 sepia:
-![image](https://github.com/cristina07a/Image-processing/assets/122676393/5d309429-6ec5-40d5-94f2-5a52c9098a80)
+![image](https://github.com/cristina07a/Image-processing/assets/122676393/03195256-972b-4613-a1d7-8fdff3bb410b)
 
