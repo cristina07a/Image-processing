@@ -5,9 +5,23 @@ I used <b>Visual Basic.NET</b> in order to create a program that allows applying
   
 The program works as follows: you can add images that will be memorised as <i>layers</i>. Layers can be modified (sepia, grayscale, blur, resizing - depending on canvas size). Images are saved locally, in D:/Facultate/ProiectAPD/image.bmp (the path can be modified in Form1.vb, line 28).
 
-There is a difference between the folders I added in this project. The first folder, <b>version 1</b>, uses the library AForge.Imaging in order to blur and grayscale the layers. The folder <b>version 2</b> has a different take surrounding them, being non-standard (no library).
 
-<h2>Info</h2>
+
+<h3><b>FIRST VARIANT</b> - Version 1 + Version 2</h3>
+
+There is a difference between the folders I added in this project. The first folder, <b>version 1</b>, uses the library <b>AForge.Imaging</b> in order to blur and grayscale the layers. The folder <b>version 2</b> has a different approach surrounding them, being non-standard (no library). I added this version because it allows for easier implementation of different methods of parallelization.
+
+<h3><b>SECONT VARIANT</b> - threads</h3>
+
+The first method of parallelization I implemented is using <b>threads</b>. The functions necessary for this were added by importhing the <b>System.Threading.Tasks</b> library.
+In order for a thread to start its execution, I used <b>thread.Start</b>. This was used for the buttons corresponding to the desired filter (BlurBtn_Click, SepiaBtn_Click, GrayscaleBtn_Click). For every single one of them, there is a new bitmap created inside a thread (declared with <b>Threading.Thread(Sub()... End Sub)</b>, which then has its pixels updated based on a specific formula. Also, inside the Sub, <b>Invoke</b> is used. Its purpose is for updating the image from the main thread.
+
+The way of applying filters, implicitly updating pixels based on formulas, is found in the following functions: GrayscaleImage, ApplySepiaEffect and GaussianBlur. There, I also implemented multithreading. In every single one of them, there is a <b>Parralel.For</b>, which is used for iterating through the bitmap in parallel
+
+Outside of these functions specific for multithreading, I also used <b>LockBits()</b>, which has the role of significantly improving the application (by allowing direct access to pixels data) and preventing concurrent access (it solves the error System.InvalidOperationException: 'Object is currently in use elsewhere.').
+
+
+<h2>Additional info</h2>
 
   I ran the code on my laptop, which has 16GB RAM, Intel Core i5.
 
