@@ -23,7 +23,6 @@ Partial Class Form1
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         InsertImageBtn = New Button()
-        InsertTextBtn = New Button()
         SaveBtn = New Button()
         LayerList = New ListView()
         Label1 = New Label()
@@ -46,33 +45,26 @@ Partial Class Form1
         Label4 = New Label()
         BlurBtn = New Button()
         CanvasPanel = New Panel()
+        Label9 = New Label()
+        Time = New Label()
         SuspendLayout()
         ' 
         ' InsertImageBtn
         ' 
-        InsertImageBtn.Location = New Point(861, 551)
+        InsertImageBtn.Location = New Point(884, 551)
         InsertImageBtn.Name = "InsertImageBtn"
-        InsertImageBtn.Size = New Size(160, 29)
+        InsertImageBtn.Size = New Size(137, 29)
         InsertImageBtn.TabIndex = 1
-        InsertImageBtn.Text = "Insert Image"
+        InsertImageBtn.Text = "Insert Layer"
         InsertImageBtn.UseVisualStyleBackColor = True
-        ' 
-        ' InsertTextBtn
-        ' 
-        InsertTextBtn.Location = New Point(1038, 551)
-        InsertTextBtn.Name = "InsertTextBtn"
-        InsertTextBtn.Size = New Size(160, 29)
-        InsertTextBtn.TabIndex = 2
-        InsertTextBtn.Text = "Insert Text (disabled)"
-        InsertTextBtn.UseVisualStyleBackColor = True
         ' 
         ' SaveBtn
         ' 
-        SaveBtn.Location = New Point(938, 586)
+        SaveBtn.Location = New Point(1035, 551)
         SaveBtn.Name = "SaveBtn"
-        SaveBtn.Size = New Size(195, 29)
+        SaveBtn.Size = New Size(145, 29)
         SaveBtn.TabIndex = 3
-        SaveBtn.Text = "Save Image"
+        SaveBtn.Text = "Save Canvas"
         SaveBtn.UseVisualStyleBackColor = True
         ' 
         ' LayerList
@@ -251,11 +243,31 @@ Partial Class Form1
         CanvasPanel.Size = New Size(816, 636)
         CanvasPanel.TabIndex = 30
         ' 
+        ' Label9
+        ' 
+        Label9.AutoSize = True
+        Label9.Location = New Point(883, 614)
+        Label9.Name = "Label9"
+        Label9.Size = New Size(131, 20)
+        Label9.TabIndex = 31
+        Label9.Text = "Elapsed time (ms):"
+        ' 
+        ' Time
+        ' 
+        Time.AutoSize = True
+        Time.Location = New Point(1014, 614)
+        Time.Name = "Time"
+        Time.Size = New Size(13, 20)
+        Time.TabIndex = 32
+        Time.Text = " "
+        ' 
         ' Form1
         ' 
         AutoScaleDimensions = New SizeF(8F, 20F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1210, 675)
+        Controls.Add(Time)
+        Controls.Add(Label9)
         Controls.Add(CanvasPanel)
         Controls.Add(BlurBtn)
         Controls.Add(Label4)
@@ -277,7 +289,6 @@ Partial Class Form1
         Controls.Add(Label1)
         Controls.Add(LayerList)
         Controls.Add(SaveBtn)
-        Controls.Add(InsertTextBtn)
         Controls.Add(InsertImageBtn)
         Name = "Form1"
         Text = "Image editor"
@@ -285,7 +296,6 @@ Partial Class Form1
         PerformLayout()
     End Sub
     Friend WithEvents InsertImageBtn As Button
-    Friend WithEvents InsertTextBtn As Button
     Friend WithEvents SaveBtn As Button
     Friend WithEvents LayerList As ListView
     Friend WithEvents Label1 As Label
@@ -308,5 +318,7 @@ Partial Class Form1
     Friend WithEvents Label4 As Label
     Friend WithEvents BlurBtn As Button
     Friend WithEvents CanvasPanel As Panel
+    Friend WithEvents Label9 As Label
+    Friend WithEvents Time As Label
 
 End Class

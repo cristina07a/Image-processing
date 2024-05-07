@@ -174,12 +174,17 @@ Public Class Form1
 
             Dim originalImage As Image = pictureBox.Image
 
+            Dim stopwatch As New Stopwatch()
+            stopwatch.Start()
+
             If originalImage IsNot Nothing Then
                 ' se aplica efectul sepia'
                 Dim sepiaImage As Image = ApplySepiaEffect(originalImage)
 
                 ' se actualizeaza imaginea cu cea sepia
                 pictureBox.Image = sepiaImage
+                Dim elapsedMilliseconds As Long = stopwatch.ElapsedMilliseconds
+                Time.Text = " " & elapsedMilliseconds
             End If
         End If
     End Sub
@@ -222,9 +227,14 @@ Public Class Form1
             Dim pictureBox As PictureBox = DirectCast(selectedControlFromLayer, PictureBox)
             Dim bmp As New Bitmap(pictureBox.Image)
             Dim blurRadius As Integer = 2
+            Dim stopwatch As New Stopwatch()
+            stopwatch.Start()
 
             Dim blurredBmp As Bitmap = GaussianBlur(bmp, blurRadius)
             pictureBox.Image = blurredBmp
+            Dim elapsedMilliseconds As Long = stopwatch.ElapsedMilliseconds
+            Time.Text = " " & elapsedMilliseconds
+
         End If
     End Sub
 
@@ -289,9 +299,12 @@ Public Class Form1
         If selectedControlFromLayer IsNot Nothing AndAlso TypeOf selectedControlFromLayer Is PictureBox Then
             Dim pictureBox As PictureBox = DirectCast(selectedControlFromLayer, PictureBox)
             Dim bmp As New Bitmap(pictureBox.Image)
-
+            Dim stopwatch As New Stopwatch()
+            stopwatch.Start()
             Dim grayscaleBmp As Bitmap = GrayscaleImage(bmp)
             pictureBox.Image = grayscaleBmp
+            Dim elapsedMilliseconds As Long = stopwatch.ElapsedMilliseconds
+            Time.Text = " " & elapsedMilliseconds
         End If
     End Sub
 
