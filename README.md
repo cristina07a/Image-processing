@@ -27,17 +27,17 @@ Processor: Intel(R) Core(TM) i5-9300H CPU @ 2.40GHz   2.40 GHz
 RAM: 16GB
 
 <h4>First variant – version 1:</h4>
-sepia:
-grayscale:
-blur:
+Grayscale - average 50ms<br>
+Sepia - average 60ms<br>
+Blur - average 500ms<br>
 <h4>First variant – version 2:</h4>
-sepia: 
-grayscale:
-blur:
+Grayscale - average 55ms<br>
+Sepia - average 60ms<br>
+Blur - average 520ms<br>
 <h4>Second variant – threads:</h4>
-sepia:
-grayscale:
-blur: 
+Grayscale - average 5ms<br>
+Sepia - average 55ms<br>
+Blur - average 500ms<br>
 
 
 <h3>Application screenshots</h3>
