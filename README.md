@@ -1,7 +1,7 @@
 <h1>Image processing</h1>
 
 <h2>Overview</h2>
-I used <b>Visual Basic.NET</b> in order to create a program that allows applying filters to images and resizing them. I also used <b>AForge.Imaging v2.2.5</b> from NuGet.
+I used <b>Visual Basic.NET</b> in order to create a program that allows applying filters to images and resizing them. I also used <b>AForge.Imaging v2.2.5</b> from NuGet and <b>System.Threading.Tasks</b>
 
 The program works as follows: you can add images that will be memorised as <i>layers</i>. Layers can have filters applied to them (sepia, grayscale, blur, resizing - depending on canvas size). Images are saved locally, in D:/Facultate/ProiectAPD/image.bmp (tyou can modify this in Form1.vb by setting a different path to bitmap.Save("D:/Facultate/ProiectAPD/image.bmp")).
 
