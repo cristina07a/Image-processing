@@ -273,29 +273,27 @@ Public Class Form1
     End Function
 
     Private Function ApplySepiaEffect(originalImage As Image) As Image
-
         Dim sepiaBitmap As New Bitmap(originalImage.Width, originalImage.Height)
 
-        For x As Integer = 0 To originalImage.Width - 1
-            For y As Integer = 0 To originalImage.Height - 1
-                'culoare pixel original'
-                Dim originalColor As Color = DirectCast(originalImage, Bitmap).GetPixel(x, y)
+        Parallel.For(0, originalImage.Width, Sub(x)
+                                                 For y As Integer = 0 To originalImage.Height - 1
+                                                     Dim originalColor As Color = DirectCast(originalImage, Bitmap).GetPixel(x, y)
+                                                     Dim sepiaR As Integer = CInt(originalColor.R * 0.393 + originalColor.G * 0.769 + originalColor.B * 0.189)
+                                                     Dim sepiaG As Integer = CInt(originalColor.R * 0.349 + originalColor.G * 0.686 + originalColor.B * 0.168)
+                                                     Dim sepiaB As Integer = CInt(originalColor.R * 0.272 + originalColor.G * 0.534 + originalColor.B * 0.131)
 
-                ' valori sepia'
-                Dim sepiaR As Integer = CInt(originalColor.R * 0.393 + originalColor.G * 0.769 + originalColor.B * 0.189)
-                Dim sepiaG As Integer = CInt(originalColor.R * 0.349 + originalColor.G * 0.686 + originalColor.B * 0.168)
-                Dim sepiaB As Integer = CInt(originalColor.R * 0.272 + originalColor.G * 0.534 + originalColor.B * 0.131)
+                                                     sepiaR = Math.Min(255, Math.Max(0, sepiaR))
+                                                     sepiaG = Math.Min(255, Math.Max(0, sepiaG))
+                                                     sepiaB = Math.Min(255, Math.Max(0, sepiaB))
 
-                sepiaR = Math.Min(255, Math.Max(0, sepiaR))
-                sepiaG = Math.Min(255, Math.Max(0, sepiaG))
-                sepiaB = Math.Min(255, Math.Max(0, sepiaB))
+                                                     Dim sepiaColor As Color = Color.FromArgb(sepiaR, sepiaG, sepiaB)
 
-                ' setare culori'
-                Dim sepiaColor As Color = Color.FromArgb(sepiaR, sepiaG, sepiaB)
+                                                     SyncLock sepiaBitmap
+                                                         sepiaBitmap.SetPixel(x, y, sepiaColor)
+                                                     End SyncLock
+                                                 Next
+                                             End Sub)
 
-                sepiaBitmap.SetPixel(x, y, sepiaColor)
-            Next
-        Next
         Return sepiaBitmap
     End Function
 
@@ -326,31 +324,30 @@ Public Class Form1
         Next
 
         ' aplicare filtru pe imagine'
-        For x As Integer = radius To width - 1 - radius
-            For y As Integer = radius To height - 1 - radius
-                Dim r As Double = 0
-                Dim g As Double = 0
-                Dim b As Double = 0
+        Parallel.For(radius, width - 1 - radius, Sub(x)
+                                                     For y As Integer = radius To height - 1 - radius
+                                                         Dim r As Double = 0
+                                                         Dim g As Double = 0
+                                                         Dim b As Double = 0
 
-                For i As Integer = -radius To radius
-                    For j As Integer = -radius To radius
-                        Dim pixel As Color = source.GetPixel(x + i, y + j)
-                        Dim weight As Double = kernel(i + radius, j + radius)
-                        r += pixel.R * weight
-                        g += pixel.G * weight
-                        b += pixel.B * weight
-                    Next
-                Next
+                                                         For i As Integer = -radius To radius
+                                                             For j As Integer = -radius To radius
+                                                                 Dim pixel As Color = source.GetPixel(x + i, y + j)
+                                                                 Dim weight As Double = kernel(i + radius, j + radius)
+                                                                 r += pixel.R * weight
+                                                                 g += pixel.G * weight
+                                                                 b += pixel.B * weight
+                                                             Next
+                                                         Next
 
-                r = Math.Min(255, Math.Max(0, r))
-                g = Math.Min(255, Math.Max(0, g))
-                b = Math.Min(255, Math.Max(0, b))
+                                                         r = Math.Min(255, Math.Max(0, r))
+                                                         g = Math.Min(255, Math.Max(0, g))
+                                                         b = Math.Min(255, Math.Max(0, b))
 
-                result.SetPixel(x, y, Color.FromArgb(CInt(r), CInt(g), CInt(b)))
-            Next
-        Next
+                                                         result.SetPixel(x, y, Color.FromArgb(CInt(r), CInt(g), CInt(b)))
+                                                     Next
+                                                 End Sub)
 
         Return result
     End Function
-
 End Class
