@@ -217,7 +217,7 @@ Public Class Form1
                                                    Me.Invoke(Sub()
                                                                  pictureBox.Image = blurredBmp
                                                                  Dim elapsedMilliseconds As Long = stopwatch.ElapsedMilliseconds
-                                                                     Time.Text = " " & elapsedMilliseconds
+                                                                 Time.Text = " " & elapsedMilliseconds
                                                              End Sub)
                                                End Sub)
             thread.Start()
@@ -238,7 +238,7 @@ Public Class Form1
                                                    Me.Invoke(Sub()
                                                                  ' actualizare imagine cu efect grayscale'
                                                                  pictureBox.Image = grayscaleBmp
-                                                                 Dim elapsedMilliseconds As Long = Stopwatch.ElapsedMilliseconds
+                                                                 Dim elapsedMilliseconds As Long = stopwatch.ElapsedMilliseconds
                                                                  Time.Text = " " & elapsedMilliseconds
                                                              End Sub)
                                                End Sub)
@@ -271,7 +271,6 @@ Public Class Form1
                         Dim red As Integer = pixelData(offset + 2)
                         Dim grayscaleValue As Integer = CInt(0.2125 * red + 0.7154 * green + 0.0721 * blue)
 
-                        ' Set grayscale value for each channel
                         pixelData(offset) = grayscaleValue
                         pixelData(offset + 1) = grayscaleValue
                         pixelData(offset + 2) = grayscaleValue
@@ -286,85 +285,121 @@ Public Class Form1
         Return grayscaleBitmap
     End Function
 
-    Private Function ApplySepiaEffect(originalImage As Image) As Image
+    Private Function ApplySepiaEffect(image As Bitmap) As Bitmap
+        Dim width As Integer = image.Width
+        Dim height As Integer = image.Height
 
-        Dim sepiaBitmap As New Bitmap(originalImage.Width, originalImage.Height)
+        Dim sepiaBitmap As New Bitmap(width, height)
 
-        For x As Integer = 0 To originalImage.Width - 1
-            For y As Integer = 0 To originalImage.Height - 1
-                'culoare pixel original'
-                Dim originalColor As Color = DirectCast(originalImage, Bitmap).GetPixel(x, y)
+        Dim bitmapData As BitmapData = image.LockBits(New Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, image.PixelFormat)
 
-                ' valori sepia'
-                Dim sepiaR As Integer = CInt(originalColor.R * 0.393 + originalColor.G * 0.769 + originalColor.B * 0.189)
-                Dim sepiaG As Integer = CInt(originalColor.R * 0.349 + originalColor.G * 0.686 + originalColor.B * 0.168)
-                Dim sepiaB As Integer = CInt(originalColor.R * 0.272 + originalColor.G * 0.534 + originalColor.B * 0.131)
+        Dim bytesPerPixel As Integer = image.GetPixelFormatSize(image.PixelFormat) \ 8
+        Dim stride As Integer = bitmapData.Stride
+        Dim totalBytes As Integer = stride * height
+        Dim pixelData(totalBytes - 1) As Byte
+        Marshal.Copy(bitmapData.Scan0, pixelData, 0, totalBytes)
 
-                sepiaR = Math.Min(255, Math.Max(0, sepiaR))
-                sepiaG = Math.Min(255, Math.Max(0, sepiaG))
-                sepiaB = Math.Min(255, Math.Max(0, sepiaB))
+        image.UnlockBits(bitmapData)
 
-                ' setare culori'
-                Dim sepiaColor As Color = Color.FromArgb(sepiaR, sepiaG, sepiaB)
+        Parallel.For(0, height,
+            Sub(y)
+                For x As Integer = 0 To width - 1
+                    Dim offset As Integer = y * stride + x * bytesPerPixel
+                    Dim blue As Integer = pixelData(offset)
+                    Dim green As Integer = pixelData(offset + 1)
+                    Dim red As Integer = pixelData(offset + 2)
 
-                sepiaBitmap.SetPixel(x, y, sepiaColor)
-            Next
-        Next
+                    Dim sepiaR As Integer = CInt(red * 0.393 + green * 0.769 + blue * 0.189)
+                    Dim sepiaG As Integer = CInt(red * 0.349 + green * 0.686 + blue * 0.168)
+                    Dim sepiaB As Integer = CInt(red * 0.272 + green * 0.534 + blue * 0.131)
+
+                    sepiaR = Math.Min(255, Math.Max(0, sepiaR))
+                    sepiaG = Math.Min(255, Math.Max(0, sepiaG))
+                    sepiaB = Math.Min(255, Math.Max(0, sepiaB))
+
+                    ' setare sepia'
+                    pixelData(offset) = CByte(sepiaB)
+                    pixelData(offset + 1) = CByte(sepiaG)
+                    pixelData(offset + 2) = CByte(sepiaR)
+                Next
+            End Sub)
+
+        Dim sepiaBitmapData As BitmapData = sepiaBitmap.LockBits(New Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, sepiaBitmap.PixelFormat)
+        Marshal.Copy(pixelData, 0, sepiaBitmapData.Scan0, totalBytes)
+        sepiaBitmap.UnlockBits(sepiaBitmapData)
+
         Return sepiaBitmap
     End Function
 
-    Private Function GaussianBlur(source As Bitmap, radius As Integer) As Bitmap
-        Dim width As Integer = source.Width
-        Dim height As Integer = source.Height
+    Private Function GaussianBlur(image As Bitmap, radius As Integer) As Bitmap
+        Dim width As Integer = image.Width
+        Dim height As Integer = image.Height
         Dim result As New Bitmap(width, height)
 
-        Dim kernelSize As Integer = radius * 2 + 1
-        Dim kernel(kernelSize - 1, kernelSize - 1) As Double
-        Dim kernelSum As Double = 0
+        Dim bitmapData As BitmapData = image.LockBits(New Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, image.PixelFormat)
+        Dim bytesPerPixel As Integer = image.GetPixelFormatSize(image.PixelFormat) \ 8
+        Dim stride As Integer = bitmapData.Stride
+        Dim totalBytes As Integer = stride * height
+        Dim pixelData(totalBytes - 1) As Byte
+        Marshal.Copy(bitmapData.Scan0, pixelData, 0, totalBytes)
+        image.UnlockBits(bitmapData)
 
-        'calculare kernel'
-        For x As Integer = -radius To radius
-            For y As Integer = -radius To radius
-                Dim distance As Double = Math.Sqrt(x * x + y * y)
-                Dim value As Double = Math.Exp(-(distance * distance) / (2 * radius * radius)) / (2 * Math.PI * radius * radius)
-                kernel(x + radius, y + radius) = value
-                kernelSum += value
-            Next
-        Next
+        Parallel.For(0, height,
+        Sub(y)
+            Dim currentLineOffset As Integer = y * stride
 
-        ' normalizare kernel '
-        For x As Integer = 0 To kernelSize - 1
-            For y As Integer = 0 To kernelSize - 1
-                kernel(x, y) /= kernelSum
-            Next
-        Next
-
-        ' aplicare filtru pe imagine'
-        For x As Integer = radius To width - 1 - radius
-            For y As Integer = radius To height - 1 - radius
+            For x As Integer = 0 To width - 1
                 Dim r As Double = 0
                 Dim g As Double = 0
                 Dim b As Double = 0
+                Dim kernelSum As Double = 0
 
                 For i As Integer = -radius To radius
                     For j As Integer = -radius To radius
-                        Dim pixel As Color = source.GetPixel(x + i, y + j)
-                        Dim weight As Double = kernel(i + radius, j + radius)
-                        r += pixel.R * weight
-                        g += pixel.G * weight
-                        b += pixel.B * weight
+                        Dim px As Integer = Math.Max(0, Math.Min(width - 1, x + i))
+                        Dim py As Integer = Math.Max(0, Math.Min(height - 1, y + j))
+                        Dim pixelOffset As Integer = (px * bytesPerPixel) + (py * stride)
+
+                        ' Extragem valorile RGB ale pixelului'
+                        Dim blue As Byte = pixelData(pixelOffset)
+                        Dim green As Byte = pixelData(pixelOffset + 1)
+                        Dim red As Byte = pixelData(pixelOffset + 2)
+
+                        Dim distance As Double = Math.Sqrt(i * i + j * j)
+                        Dim value As Double = Math.Exp(-(distance * distance) / (2 * radius * radius)) / (2 * Math.PI * radius * radius)
+
+                        r += red * value
+                        g += green * value
+                        b += blue * value
+                        kernelSum += value
                     Next
                 Next
+
+                ' normalizare culori'
+                r /= kernelSum
+                g /= kernelSum
+                b /= kernelSum
 
                 r = Math.Min(255, Math.Max(0, r))
                 g = Math.Min(255, Math.Max(0, g))
                 b = Math.Min(255, Math.Max(0, b))
 
-                result.SetPixel(x, y, Color.FromArgb(CInt(r), CInt(g), CInt(b)))
+                Dim offset As Integer = currentLineOffset + (x * bytesPerPixel)
+                pixelData(offset) = CByte(b)
+                pixelData(offset + 1) = CByte(g)
+                pixelData(offset + 2) = CByte(r)
             Next
-        Next
+        End Sub)
 
-        Return result
+
+        Dim resultBitmap As New Bitmap(width, height)
+        Dim resultBitmapData As BitmapData = resultBitmap.LockBits(New Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, resultBitmap.PixelFormat)
+        Marshal.Copy(pixelData, 0, resultBitmapData.Scan0, totalBytes)
+        resultBitmap.UnlockBits(resultBitmapData)
+
+        Return resultBitmap
     End Function
+
+
 
 End Class
