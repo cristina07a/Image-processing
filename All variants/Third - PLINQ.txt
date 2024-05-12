@@ -133,3 +133,57 @@
 
         Return resultBitmap
     End Function
+
+    Private Function ApplyBlurEffect(image As Bitmap, radius As Integer) As Bitmap
+        If image Is Nothing Then
+            Return image
+        End If
+
+        Dim bitmap As New Bitmap(image.Width, image.Height, PixelFormat.Format32bppArgb)
+        Using g As Graphics = Graphics.FromImage(bitmap)
+            g.DrawImage(image, New Rectangle(0, 0, bitmap.Width, bitmap.Height))
+        End Using
+
+        'PLINQ'
+        Dim result = bitmap.AsParallel().Select(Function(pixel)
+                                                    Dim r As Double = 0
+                                                    Dim g As Double = 0
+                                                    Dim b As Double = 0
+                                                    Dim kernelSum As Double = 0
+
+                                                    For i As Integer = -radius To radius
+                                                        For j As Integer = -radius To radius
+                                                            Dim px As Integer = Math.Max(0, Math.Min(bitmap.Width - 1, pixel.X + i))
+                                                            Dim py As Integer = Math.Max(0, Math.Min(bitmap.Height - 1, pixel.Y + j))
+
+                                                            Dim neighborColor = bitmap.GetPixel(px, py)
+                                                            Dim value As Double = Math.Exp(-((i * i + j * j) / (2 * radius * radius))) / (2 * Math.PI * radius * radius)
+
+                                                            r += neighborColor.R * value
+                                                            g += neighborColor.G * value
+                                                            b += neighborColor.B * value
+                                                            kernelSum += value
+                                                        Next
+                                                    Next
+
+                                                    ' normalizare culori
+                                                    r /= kernelSum
+                                                    g /= kernelSum
+                                                    b /= kernelSum
+
+                                                    r = Math.Min(255, Math.Max(0, r))
+                                                    g = Math.Min(255, Math.Max(0, g))
+                                                    b = Math.Min(255, Math.Max(0, b))
+
+                                                    Return Color.FromArgb(CInt(r), CInt(g), CInt(b))
+                                                End Function).ToArray()
+
+        Dim resultBitmap As New Bitmap(image.Width, image.Height)
+        For y As Integer = 0 To image.Height - 1
+            For x As Integer = 0 To image.Width - 1
+                resultBitmap.SetPixel(x, y, result(y * image.Width + x))
+            Next
+        Next
+
+        Return resultBitmap
+    End Function
