@@ -1,0 +1,173 @@
+'BUTTONS'
+
+'SEPIA'
+    Private Sub SepiaBtn_Click(sender As Object, e As EventArgs) Handles SepiaBtn.Click
+
+        'se verifica daca este selectata o imagine'
+        If selectedControlFromLayer IsNot Nothing AndAlso TypeOf selectedControlFromLayer Is PictureBox Then
+            Dim pictureBox As PictureBox = CType(selectedControlFromLayer, PictureBox)
+
+            Dim originalImage As Image = pictureBox.Image
+
+            Dim stopwatch As New Stopwatch()
+            stopwatch.Start()
+
+            If originalImage IsNot Nothing Then
+                ' se aplica efectul sepia'
+                Dim sepiaImage As Image = ApplySepiaEffect(originalImage)
+
+                ' se actualizeaza imaginea cu cea sepia
+                pictureBox.Image = sepiaImage
+                Dim elapsedMilliseconds As Long = stopwatch.ElapsedMilliseconds
+                Time.Text = " " & elapsedMilliseconds
+            End If
+        End If
+    End Sub
+
+'BLUR CU RADIUS'
+    Private Sub BlurBtn_Click(sender As Object, e As EventArgs) Handles BlurBtn.Click
+
+        'se verifica daca este selectata o imagine'
+        If selectedControlFromLayer IsNot Nothing AndAlso TypeOf selectedControlFromLayer Is PictureBox Then
+            Dim pictureBox As PictureBox = DirectCast(selectedControlFromLayer, PictureBox)
+            Dim bmp As New Bitmap(pictureBox.Image)
+            Dim blurRadius As Integer = 2
+            Dim stopwatch As New Stopwatch()
+            stopwatch.Start()
+
+            Dim blurredBmp As Bitmap = GaussianBlur(bmp, blurRadius)
+            pictureBox.Image = blurredBmp
+            Dim elapsedMilliseconds As Long = stopwatch.ElapsedMilliseconds
+            Time.Text = " " & elapsedMilliseconds
+
+        End If
+    End Sub
+
+    'GRAYSCALE'
+    Private Sub GrayscaleBtn_Click(sender As Object, e As EventArgs) Handles GrayscaleBtn.Click
+
+        'se verifica daca este selectata o imagine'
+        If selectedControlFromLayer IsNot Nothing AndAlso TypeOf selectedControlFromLayer Is PictureBox Then
+            Dim pictureBox As PictureBox = DirectCast(selectedControlFromLayer, PictureBox)
+            Dim bmp As New Bitmap(pictureBox.Image)
+            Dim stopwatch As New Stopwatch()
+            stopwatch.Start()
+            Dim grayscaleBmp As Bitmap = GrayscaleImage(bmp)
+            pictureBox.Image = grayscaleBmp
+            Dim elapsedMilliseconds As Long = stopwatch.ElapsedMilliseconds
+            Time.Text = " " & elapsedMilliseconds
+        End If
+    End Sub
+
+
+
+
+
+
+
+
+
+
+'FUNCTIONS'
+    Private Function ApplySepiaEffect(originalImage As Image) As Image
+
+        'se creaza un nou bitmap pentru imaginea sepia'
+        Dim sepiaBitmap As New Bitmap(originalImage.Width, originalImage.Height)
+
+        'se parcurge fiecare pixel din imagine'
+        For x As Integer = 0 To originalImage.Width - 1
+            For y As Integer = 0 To originalImage.Height - 1
+
+                ' se obtine culoarea pixelului original'
+                Dim originalColor As Color = DirectCast(originalImage, Bitmap).GetPixel(x, y)
+
+                ' calculare valori pentru sepia'
+                Dim sepiaR As Integer = CInt(originalColor.R * 0.393 + originalColor.G * 0.769 + originalColor.B * 0.189)
+                Dim sepiaG As Integer = CInt(originalColor.R * 0.349 + originalColor.G * 0.686 + originalColor.B * 0.168)
+                Dim sepiaB As Integer = CInt(originalColor.R * 0.272 + originalColor.G * 0.534 + originalColor.B * 0.131)
+
+                sepiaR = Math.Min(255, Math.Max(0, sepiaR))
+                sepiaG = Math.Min(255, Math.Max(0, sepiaG))
+                sepiaB = Math.Min(255, Math.Max(0, sepiaB))
+
+                'se creaza noua culoare sepia'
+                Dim sepiaColor As Color = Color.FromArgb(sepiaR, sepiaG, sepiaB)
+
+                sepiaBitmap.SetPixel(x, y, sepiaColor)
+            Next
+        Next
+        Return sepiaBitmap
+    End Function
+
+    
+
+    Function GaussianBlur(source As Bitmap, radius As Integer) As Bitmap
+        Dim width As Integer = source.Width
+        Dim height As Integer = source.Height
+        Dim result As New Bitmap(width, height)
+
+        Dim kernelSize As Integer = radius * 2 + 1
+        Dim kernel(kernelSize - 1, kernelSize - 1) As Double
+        Dim kernelSum As Double = 0
+
+        ' se calculeaza kernel-ul Gaussian'
+        For x As Integer = -radius To radius
+            For y As Integer = -radius To radius
+                Dim distance As Double = Math.Sqrt(x * x + y * y)
+                Dim value As Double = Math.Exp(-(distance * distance) / (2 * radius * radius)) / (2 * Math.PI * radius * radius)
+                kernel(x + radius, y + radius) = value
+                kernelSum += value
+            Next
+        Next
+
+        ' se normalizeaza kernelul'
+        For x As Integer = 0 To kernelSize - 1
+            For y As Integer = 0 To kernelSize - 1
+                kernel(x, y) /= kernelSum
+            Next
+        Next
+
+        ' se aplica filtrul Gaussian pe imagine'
+        For x As Integer = radius To width - 1 - radius
+            For y As Integer = radius To height - 1 - radius
+                Dim r As Double = 0
+                Dim g As Double = 0
+                Dim b As Double = 0
+
+                For i As Integer = -radius To radius
+                    For j As Integer = -radius To radius
+                        Dim pixel As Color = source.GetPixel(x + i, y + j)
+                        Dim weight As Double = kernel(i + radius, j + radius)
+                        r += pixel.R * weight
+                        g += pixel.G * weight
+                        b += pixel.B * weight
+                    Next
+                Next
+
+                r = Math.Min(255, Math.Max(0, r))
+                g = Math.Min(255, Math.Max(0, g))
+                b = Math.Min(255, Math.Max(0, b))
+
+                result.SetPixel(x, y, Color.FromArgb(CInt(r), CInt(g), CInt(b)))
+            Next
+        Next
+
+        Return result
+    End Function
+
+
+
+    Private Function GrayscaleImage(image As Bitmap) As Bitmap
+        Dim grayscaleBitmap As New Bitmap(image.Width, image.Height)
+
+        For x As Integer = 0 To image.Width - 1
+            For y As Integer = 0 To image.Height - 1
+                Dim originalColor As Color = image.GetPixel(x, y)
+                Dim grayscaleValue As Integer = CInt(0.2125 * originalColor.R + 0.7154 * originalColor.G + 0.0721 * originalColor.B)
+                Dim grayscaleColor As Color = Color.FromArgb(grayscaleValue, grayscaleValue, grayscaleValue)
+                grayscaleBitmap.SetPixel(x, y, grayscaleColor)
+            Next
+        Next
+
+        Return grayscaleBitmap
+    End Function
