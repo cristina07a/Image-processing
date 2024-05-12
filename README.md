@@ -18,6 +18,10 @@ The way of applying filters, implicitly updating pixels based on formulas, is fo
 
 Outside of these functions specific for multithreading, I also used <b>LockBits()</b>, which has the role of significantly improving the application (by allowing direct access to pixels data) and preventing concurrent access (it solves the error System.InvalidOperationException: 'Object is currently in use elsewhere.').
 
+<h4><b>THIRD VARIANT</b> - PLINQ</h4>
+
+The second method of parallelization I implemented is using <b>PLINQ</b> (Parallel Language Integrated Query). The functions used for this implementation were added on the functionalities of Blur, Sepia and Grayscale, and can be found on the functions ApplyGrayscaleEffect, ApplySepiaEffect and ApplyBlurEffect. There, I used <b>AsParallel()</b> (convert a LINQ sequence in a PLINQ sequence), <b>Select()<b> and <b>ToArray</b> (Cconvert PLINQ to an array).
+
 
 <h2>Additional info</h2>
 To see the duration required for applying a filter, I added a new Layer on right bottom where I display it in milliseconds. I used a stopwatch for every button that is responsible for a filter before and right after applying it.
@@ -27,17 +31,21 @@ Processor: Intel(R) Core(TM) i5-9300H CPU @ 2.40GHz   2.40 GHz
 RAM: 16GB
 
 <h4>First variant – version 1:</h4>
-Grayscale - average 50ms<br>
-Sepia - average 60ms<br>
-Blur - average 500ms<br>
+Grayscale - average ms<br>
+Sepia - average ms<br>
+Blur - average ms<br>
 <h4>First variant – version 2:</h4>
-Grayscale - average 55ms<br>
-Sepia - average 60ms<br>
-Blur - average 520ms<br>
+Grayscale - average ms<br>
+Sepia - average ms<br>
+Blur - average ms<br>
 <h4>Second variant – threads:</h4>
-Grayscale - average 5ms<br>
-Sepia - average 55ms<br>
-Blur - average 500ms<br>
+Grayscale - average ms<br>
+Sepia - average ms<br>
+Blur - average ms<br>
+<h4>Third variant – PLINQ:</h4>
+Grayscale - average ms<br>
+Sepia - average ms<br>
+Blur - average ms<br>
 
 
 <h3>Application screenshots</h3>
