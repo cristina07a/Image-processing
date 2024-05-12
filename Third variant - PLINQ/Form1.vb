@@ -183,7 +183,6 @@ Public Class Form1
 
             If originalImage IsNot Nothing Then
 
-                ' folosim PLINQ pentru a itera prin pixelii imaginii și aplicăm efectul sepia
                 Dim sepiaImage As Image = ApplySepiaEffect(originalImage)
 
                 ' actualizare imagine cu efect sepia
@@ -205,7 +204,6 @@ Public Class Form1
             Dim stopwatch As New Stopwatch()
             stopwatch.Start()
 
-            ' folosim PLINQ pentru a aplica efectul de blur
             Dim blurredBmp As Bitmap = ApplyBlurEffect(bmp, blurRadius)
 
             ' actualizare imagine cu efect blurat
@@ -224,7 +222,6 @@ Public Class Form1
             Dim stopwatch As New Stopwatch()
             stopwatch.Start()
 
-            ' folosim PLINQ pentru a aplica efectul de grayscale
             Dim grayscaleBmp As Bitmap = ApplyGrayscaleEffect(bmp)
 
             ' actualizare imagine cu efect grayscale
@@ -235,24 +232,21 @@ Public Class Form1
     End Sub
 
     Private Function ApplyGrayscaleEffect(image As Bitmap) As Bitmap
-        ' Dacă imaginea este null sau dimensiunea este zero, returnăm direct imaginea
         If image Is Nothing OrElse image.Width = 0 OrElse image.Height = 0 Then
             Return image
         End If
 
-        ' Convertim imaginea la format 32bppArgb pentru a evita problemele cu culoarea
         Dim bitmap As New Bitmap(image.Width, image.Height, PixelFormat.Format32bppArgb)
         Using g As Graphics = Graphics.FromImage(bitmap)
             g.DrawImage(image, New Rectangle(0, 0, bitmap.Width, bitmap.Height))
         End Using
 
-        ' Folosim PLINQ pentru a itera prin pixelii imaginii și aplicăm efectul de grayscale
+        'PLINQ'
         Dim result = bitmap.AsParallel().Select(Function(pixel)
                                                     Dim gray = CInt(0.2125 * pixel.R + 0.7154 * pixel.G + 0.0721 * pixel.B)
                                                     Return Color.FromArgb(gray, gray, gray)
                                                 End Function).ToArray()
 
-        ' Construim o nouă imagine pe baza rezultatului grayscale
         Dim resultBitmap As New Bitmap(image.Width, image.Height)
         For y As Integer = 0 To image.Height - 1
             For x As Integer = 0 To image.Width - 1
@@ -264,18 +258,16 @@ Public Class Form1
     End Function
 
     Private Function ApplySepiaEffect(image As Bitmap) As Image
-        ' Dacă imaginea este null, returnăm direct imaginea
         If image Is Nothing Then
             Return image
         End If
 
-        ' Convertim imaginea la format 32bppArgb pentru a evita problemele cu culoarea
         Dim bitmap As New Bitmap(image.Width, image.Height, PixelFormat.Format32bppArgb)
         Using g As Graphics = Graphics.FromImage(bitmap)
             g.DrawImage(image, New Rectangle(0, 0, bitmap.Width, bitmap.Height))
         End Using
 
-        ' Folosim PLINQ pentru a itera prin pixelii imaginii și aplicăm efectul sepia
+        'PLINQ'
         Dim result = bitmap.AsParallel().Select(Function(pixel)
                                                     Dim sepiaR As Integer = CInt(pixel.R * 0.393 + pixel.G * 0.769 + pixel.B * 0.189)
                                                     Dim sepiaG As Integer = CInt(pixel.R * 0.349 + pixel.G * 0.686 + pixel.B * 0.168)
@@ -288,7 +280,6 @@ Public Class Form1
                                                     Return Color.FromArgb(sepiaR, sepiaG, sepiaB)
                                                 End Function).ToArray()
 
-        ' Construim o nouă imagine pe baza rezultatului sepia
         Dim resultBitmap As New Bitmap(image.Width, image.Height)
         For y As Integer = 0 To image.Height - 1
             For x As Integer = 0 To image.Width - 1
@@ -300,18 +291,16 @@ Public Class Form1
     End Function
 
     Private Function ApplyBlurEffect(image As Bitmap, radius As Integer) As Bitmap
-        ' Dacă imaginea este null, returnăm direct imaginea
         If image Is Nothing Then
             Return image
         End If
 
-        ' Convertim imaginea la format 32bppArgb pentru a evita problemele cu culoarea
         Dim bitmap As New Bitmap(image.Width, image.Height, PixelFormat.Format32bppArgb)
         Using g As Graphics = Graphics.FromImage(bitmap)
             g.DrawImage(image, New Rectangle(0, 0, bitmap.Width, bitmap.Height))
         End Using
 
-        ' Folosim PLINQ pentru a itera prin pixelii imaginii și aplicăm efectul de blur
+        'PLINQ'
         Dim result = bitmap.AsParallel().Select(Function(pixel)
                                                     Dim r As Double = 0
                                                     Dim g As Double = 0
@@ -323,7 +312,6 @@ Public Class Form1
                                                             Dim px As Integer = Math.Max(0, Math.Min(bitmap.Width - 1, pixel.X + i))
                                                             Dim py As Integer = Math.Max(0, Math.Min(bitmap.Height - 1, pixel.Y + j))
 
-                                                            ' Extragem valorile RGB ale pixelului
                                                             Dim neighborColor = bitmap.GetPixel(px, py)
                                                             Dim value As Double = Math.Exp(-((i * i + j * j) / (2 * radius * radius))) / (2 * Math.PI * radius * radius)
 
@@ -334,7 +322,7 @@ Public Class Form1
                                                         Next
                                                     Next
 
-                                                    ' Normalizare culori
+                                                    ' normalizare culori
                                                     r /= kernelSum
                                                     g /= kernelSum
                                                     b /= kernelSum
@@ -346,7 +334,6 @@ Public Class Form1
                                                     Return Color.FromArgb(CInt(r), CInt(g), CInt(b))
                                                 End Function).ToArray()
 
-        ' Construim o nouă imagine pe baza rezultatului blurat
         Dim resultBitmap As New Bitmap(image.Width, image.Height)
         For y As Integer = 0 To image.Height - 1
             For x As Integer = 0 To image.Width - 1
