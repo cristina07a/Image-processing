@@ -20,7 +20,7 @@ Outside of these functions specific for multithreading, I also used <b>LockBits(
 
 <h4><b>THIRD VARIANT</b> - PLINQ</h4>
 
-The second method of parallelization I implemented is using <b>PLINQ</b> (Parallel Language Integrated Query). The functions used for this implementation were added on the functionalities of Blur, Sepia and Grayscale, and can be found on the functions ApplyGrayscaleEffect, ApplySepiaEffect and ApplyBlurEffect. There, I used <b>AsParallel()</b> (convert a LINQ sequence in a PLINQ sequence), <b>Select()<b> and <b>ToArray</b> (Cconvert PLINQ to an array).
+The second method of parallelization I implemented is using <b>PLINQ</b> (Parallel Language Integrated Query). The functions used for this implementation were added on the functionalities of Blur, Sepia and Grayscale, and can be found on the functions ApplyGrayscaleEffect, ApplySepiaEffect and ApplyBlurEffect. There, I used <b>AsParallel()</b> (convert a LINQ sequence in a PLINQ sequence), <b>Select()<b> and <b>ToArray</b> (Convert PLINQ to an array).
 
 
 <h2>Additional info</h2>
@@ -30,22 +30,9 @@ Machine specifications:
 Processor: Intel(R) Core(TM) i5-9300H CPU @ 2.40GHz   2.40 GHz
 RAM: 16GB
 
-<h4>First variant – version 1:</h4>
-Grayscale - average ms<br>
-Sepia - average ms<br>
-Blur - average ms<br>
-<h4>First variant – version 2:</h4>
-Grayscale - average ms<br>
-Sepia - average ms<br>
-Blur - average ms<br>
-<h4>Second variant – threads:</h4>
-Grayscale - average ms<br>
-Sepia - average ms<br>
-Blur - average ms<br>
-<h4>Third variant – PLINQ:</h4>
-Grayscale - average ms<br>
-Sepia - average ms<br>
-Blur - average ms<br>
+I applied all the filters to the same images with different sizes, because my application allows modifying this as well.
+
+![image](https://github.com/cristina07a/Image-processing/assets/122676393/af764249-c6d5-4e30-8e59-ec53d203c9d0)
 
 
 <h3>Application screenshots</h3>
